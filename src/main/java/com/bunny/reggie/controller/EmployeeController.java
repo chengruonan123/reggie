@@ -8,9 +8,9 @@ import com.bunny.reggie.common.R;
 import com.bunny.reggie.entity.Employee;
 import com.bunny.reggie.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,6 +95,26 @@ public class EmployeeController {
         employeeService.save(employee);
 
         return R.success("新增员工成功！");
+    }
+
+    @GetMapping("/page")
+    public R<Page> page(int page,int pageSize,String name){
+        log.info("page={},pagesize={},name={}",page,pageSize,name);
+
+        //构造分页构造器
+        Page pageInfo=new Page(page,pageSize);
+
+        //构造条件构造器
+        LambdaQueryWrapper<Employee> queryWrapper=new LambdaQueryWrapper();
+        //添加过滤条件  StringUtils来自apache.common
+        queryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
+        //添加排序条件
+        queryWrapper.orderByDesc(Employee::getUpdateTime);
+
+        //执行查询
+        employeeService.page(pageInfo,queryWrapper);
+
+        return R.success(pageInfo);
     }
 
 }
