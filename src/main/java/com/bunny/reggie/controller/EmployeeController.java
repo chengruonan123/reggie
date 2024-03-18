@@ -63,12 +63,19 @@ public class EmployeeController {
         return R.success(emp);
     }
 
+
+    /**
+     * 员工退出功能
+     * @param request
+     * @return
+     */
     @PostMapping("/logout")
     public R<String> logout(HttpServletRequest request) {
         //清理session中保存的当前登录员工的id
         request.getSession().removeAttribute("employee");
         return R.success("退出成功！");
     }
+
 
     /**
      * 新增员工信息
@@ -97,6 +104,14 @@ public class EmployeeController {
         return R.success("新增员工成功！");
     }
 
+
+    /**
+     * 员工信息分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
         log.info("page={},pagesize={},name={}",page,pageSize,name);
@@ -115,6 +130,25 @@ public class EmployeeController {
         employeeService.page(pageInfo,queryWrapper);
 
         return R.success(pageInfo);
+    }
+
+
+    /**
+     * 修改员工信息
+     * @param request
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
+        log.info(employee.toString());
+
+        Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(empId);
+        employeeService.updateById(employee);
+
+        return R.success("员工信息修改成功！");
     }
 }
 
