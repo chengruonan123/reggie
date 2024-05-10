@@ -12,7 +12,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,7 +74,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         this.updateById(dishDto);
 
         //清理当前菜品对应口味数据---dish——flavor表的delete操作
-        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper();
+        LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();   //这里教程上没有<>,黄色下划线，我自己加上<>
         queryWrapper.eq(DishFlavor::getDishId, dishDto.getId());
 
         dishFlavorService.remove(queryWrapper);
